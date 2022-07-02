@@ -1,0 +1,215 @@
+1)
+- name: Working With debug module
+  hosts: all
+
+  tasks:
+
+    # Module and argument in the same line
+    - name: First debug
+      debug: msg="Hello world"
+
+2) variable with global
+
+- name: playbook
+  hosts: localhost
+  vars:
+    URL: lereladdu.com
+  tasks:
+  - name: print 1
+    debug:
+      msg: "{{URL}}"
+
+3) variable with remote location file (rupam.yml is remote location file content in URL: jamlakabhai.in)
+
+- name: playbook
+  hosts: localhost
+
+  vars_files: rupam.yml  
+  tasks:
+  - name: print 1
+    debug:
+     msg: "{{URL}}"
+ 
+
+  OR
+
+- name: playbook
+  hosts: localhost
+  vars:
+   URL: lereladdu.com
+  vars_files: rupam.yml  
+  tasks:
+  - name: print 1
+    debug:
+     msg: "{{URL}}"
+  # # vars:
+  # #  URL: aws.com  
+
+4) variable with local
+
+- name: playbook1 
+  hosts: localhost
+  vars:
+   URL: global.com
+  tasks: 
+  - name: print message_1
+    debug:
+     msg: "{{URL}}"
+  vars:
+   URL: local.com
+
+5) variable with hosts ( hosts.yml - 3.95.190.63 URL=vaibhavmess.in 3.86.166.35 URL=host_file.cloudblitz.in)
+
+- name: Playbook1
+  hosts: all
+  tasks: 
+  - name: print url
+    debug:
+      msg: "{{URL}}"
+
+6) varibale with shell 
+
+- name: Playbook1
+  hosts: all
+  tasks: 
+  - shell: uptime >> uptime.txt
+  - name: print url
+    debug:
+      msg: "{{ansible_distribution}}"
+   
+
+*check file in node via ssh & list
+
+7) variable with prompt
+
+- name: Playbook1
+  hosts: all
+
+  vars_prompt:
+  - name: URL
+    prompt: "ENTER URL"
+    private: false
+
+  tasks: 
+  - name: print url
+    debug:
+      msg: "{{URL}}"
+   
+*if you want make it hide prompt remove private: false
+
+8) variable cli
+ansible-playbook var_file.yml -e URL=Aws.in
+
+9) specific information from node server 
+
+example : ansible_user_dir 
+
+- name: Playbook1
+  hosts: all
+
+  tasks: 
+  
+  - name: print ansible user 
+    debug:
+      msg: "ansible user: {{ansible_user_dir}}"
+   
+10) check content of contents
+
+- name: Playbook1
+  hosts: all
+
+  tasks: 
+
+  - name: print ansible user 
+    debug:
+      msg: "ansible user: {{ansible_lsb.codename}}"
+   
+
+*note : ansible_lsb.codename
+it pick content from ansible _lsb to content codename. it like 1.11. dot will seperate contents of contents.
+
+11) to install service 
+
+- name: Playbook1
+  hosts: all
+
+  tasks: 
+  - name: installation of service
+    become: true
+    apt: 
+     name: ftp 
+     state: latest 
+
+12) tags use to identify sp. attributes 
+
+- name: Playbook1
+  hosts: all
+
+  tasks: 
+
+  - name: installation of service
+    become: true
+    apt: 
+     name: ftp 
+     state: latest 
+    tags: ftp_sevice
+
+  - name: print ansible user 
+    debug:
+      msg: "ansible user: {{ansible_lsb.codename}}"
+    tags: only_print
+
+  - name: print ansible user 
+    debug:
+      msg: "ansible user: {{ansible_lsb.codename}}"
+    tags: only_two
+
+
+example: hit on terminal---   ansible-playbook akshay.yml -t only two
+
+13) gather facts
+
+ if 
+a) gather_facts: yes ------ will work
+b) gather_facts: no ------ will not work
+
+- name: playbook_2
+  hosts: all
+  gather_facts: yes
+  tasks:
+
+    - name: Print the task_0
+      debug:
+        msg: "{{ansible_selinux_python_present}}"
+
+14) ignore errors --- if anone script will not running / for exception put ignore_errors: yes
+
+- name: playbook_3
+  hosts: all
+  tasks:
+
+    - name: get output
+      shell:  ps -elf | grep sleep | grep - v grep
+      ignore_errors: yes
+
+    -name: print massage
+      debug:
+        msg: "hello world"
+
+15) root escaltion -------become: true (will work as root)
+
+
+- name: Playbook1
+  hosts: all
+
+  tasks: 
+
+  - name: installation of service
+    become: true
+    apt: 
+     name: ftp 
+     state: latest 
+    tags: ftp_sevice
+
+
+
