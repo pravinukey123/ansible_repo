@@ -1,0 +1,45 @@
+---
+# tasks file for webserver
+# webserver/tasks/main.yml file for webserver
+- name: install package
+  package:
+    name: apache2
+    state: latest
+
+
+
+# webserver/tasks/main.yml file for webserver
+- name: install package unzip
+  package:
+    name: unzip
+    state: latest      
+
+
+# add html file in /webserver/files
+- name: download web-application
+  get_url:
+    url: https://www.free-css.com/assets/files/free-css-templates/download/page2/photobusiness.zip
+    dest: /var/www/html
+
+# extracting zip file by unarchive module
+- name: extracting zip file
+  unarchive:
+    src: /var/www/html/photobusiness.zip
+    dest: /var/www/html
+    remote_src: true
+       
+
+# start and enable apache2
+- name: start and enableing  service
+  service:
+    name: apache2
+    state: started
+    enabled: true
+
+# - name: start and enableing  service
+#   service:
+#     name: apache2
+#     state: restarted
+
+
+  
