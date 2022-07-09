@@ -1,0 +1,53 @@
+---
+# update ubuntu repo
+- name: Update APT package manager repositories cache
+  apt:
+    update_cache: yes
+
+# install java prem
+- name: installing java env
+  apt:
+    state: present
+    name: "{{ item }}"
+  loop:
+      - openjdk-8-jdk
+      - unzip
+# get url of tomcat
+- name: download tomcat
+  get_url: 
+    url: https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.81/bin/apache-tomcat-8.5.81.tar.gz
+    dest: /mnt
+
+# unzip the linked file
+- name: unzip the tomcat file
+  command: tar -xvzf /mnt/apache-tomcat-8.5.81.tar.gz -C /mnt
+ # warn: false
+
+# move student.war file in webapps
+- name: move stydent.war file
+  copy:
+   src: /home/ubuntu/student.war 
+   dest: /mnt/apache-tomcat-8.5.81/webapps
+
+# run the catalina
+- name: run the catalina.sh
+  command: /mnt/apache-tomcat-8.5.81/bin/catalina.sh start
+
+# stop the catalina
+- name: run the catalina.sh
+  command: /mnt/apache-tomcat-8.5.81/bin/catalina.sh stop  
+
+# run the catalina
+- name: run the catalina.sh
+  command: /mnt/apache-tomcat-8.5.81/bin/catalina.sh start
+  
+
+
+  
+
+
+        
+
+
+
+  
